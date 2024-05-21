@@ -31,7 +31,7 @@ internal class EventRepository
     internal async Task CreateDatabase()
     {
         var query = @$"
-            CREATE TABLE Events.dbo.{_dbHelper.ConnectionString.ApplicationName} (
+            CREATE TABLE {_dbHelper.ConnectionString.DatabseName}.dbo.{_dbHelper.ConnectionString.ApplicationName} (
                 Id          INT             PRIMARY KEY IDENTITY(1, 1),
                 StreamID    INT             NOT NULL,
                 Event       NVARCHAR(MAX)   NOT NULL,
