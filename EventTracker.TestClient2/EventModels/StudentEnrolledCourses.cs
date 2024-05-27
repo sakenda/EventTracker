@@ -7,6 +7,6 @@ internal class StudentEnrolledCourses : IEvent
     public required Guid StreamId { get; init; }
     public DateTime Timestamp { get; set; }
 
-    public List<string> Courses { get; set; }
+    public List<string> Courses { get; init; }
 
 }

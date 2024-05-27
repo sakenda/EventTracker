@@ -31,7 +31,8 @@ public class EventManager
     }
 
     public static async Task<EventManager> Initialize(
-        string tableName, string applicationName, string databaseName, string server,
+        string tableName, string applicationName,
+        string databaseName, string server,
         string userId, string password)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(applicationName, nameof(applicationName));

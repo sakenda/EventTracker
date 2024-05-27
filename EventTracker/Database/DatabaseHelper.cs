@@ -52,4 +52,5 @@ internal class DatabaseHelper
 
         return result;
     }
+
 }

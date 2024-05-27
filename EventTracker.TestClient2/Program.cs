@@ -70,8 +70,6 @@ internal class Program
         var json = JsonSerializer.Serialize(student, new JsonSerializerOptions { WriteIndented = true });
         Console.WriteLine(json);
 
-        
-
         Console.WriteLine("Done!");
     }
 }

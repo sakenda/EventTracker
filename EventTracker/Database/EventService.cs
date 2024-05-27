@@ -30,4 +30,5 @@ public class EventService
     {
         return await _repository.GetEvents(streamId, options);
     }
+
 }

@@ -19,7 +19,7 @@ internal class EventRepository
     {
         var query = @$"
             SELECT CASE
-                WHEN EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'{_dbHelper.ConnectionString.ApplicationName}')
+                WHEN EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'{_dbHelper.ConnectionString.TableName}')
                 THEN 'true'
                 ELSE 'false'
             END";
@@ -32,7 +32,7 @@ internal class EventRepository
     internal async Task CreateDatabase()
     {
         var query = @$"
-            CREATE TABLE {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.ApplicationName} (
+            CREATE TABLE {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.TableName} (
                 Id          INT                 PRIMARY KEY     IDENTITY(1, 1),
                 StreamId    UNIQUEIDENTIFIER    NOT NULL,
                 Event       NVARCHAR(MAX)       NOT NULL,
@@ -47,7 +47,7 @@ internal class EventRepository
     internal async Task AddEvent(IEvent @event, string json)
     {
         var query = @$"
-            INSERT INTO {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.ApplicationName} (StreamId, Event, Timestamp)
+            INSERT INTO {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.TableName} (StreamId, Event, Timestamp)
             VALUES (@streamId, @event, @timestamp)";
 
         List<SqlParameter> parameters = new List<SqlParameter>
@@ -67,7 +67,7 @@ internal class EventRepository
     {
         var query = @$"
             SELECT StreamID, Event
-            FROM {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.ApplicationName}
+            FROM {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.TableName}
             WHERE StreamID = @streamId
             ORDER BY Timestamp";
 
