@@ -28,13 +28,11 @@ internal class DatabaseHelper
             {
                 using (SqlCommand command = new SqlCommand(sqlCommandText, connection, transaction))
                 {
-                    // Add parameters to the command
                     if (parameters != null)
                     {
                         command.Parameters.AddRange(parameters.ToArray());
                     }
 
-                    // Execute the command using the provided executor delegate
                     result = await executor(command);
                 }
 

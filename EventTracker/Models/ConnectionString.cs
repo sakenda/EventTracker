@@ -4,12 +4,13 @@ using System.Security;
 namespace EventTracker.Models;
 public class ConnectionString
 {
+    public string TableName { get; set; }
     public string ApplicationName { get; set; }
     public string DatabaseName { get; set; }
     public string Server { get; set; }
     public SqlCredential SqlCredential { get; set; }
 
-    public ConnectionString(string applicationName, string databaseName, string server, SqlCredential sqlCredential)
+    public ConnectionString(string tableName, string applicationName, string databaseName, string server, SqlCredential sqlCredential)
     {
         ApplicationName = applicationName;
         DatabaseName = databaseName;

@@ -31,7 +31,7 @@ public class EventManager
     }
 
     public static async Task<EventManager> Initialize(
-        string applicationName, string databaseName, string server,
+        string tableName, string applicationName, string databaseName, string server,
         string userId, string password)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(applicationName, nameof(applicationName));
@@ -41,7 +41,7 @@ public class EventManager
         ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
 
         var credencials = new SqlCredential(userId, ConnectionString.ToSecureString(password));
-        var connectionString = new ConnectionString(applicationName, databaseName, server, credencials);
+        var connectionString = new ConnectionString(tableName, applicationName, databaseName, server, credencials);
         return await Initialize(connectionString);
     }
 

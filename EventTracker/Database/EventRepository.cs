@@ -47,7 +47,7 @@ internal class EventRepository
     internal async Task AddEvent(IEvent @event, string json)
     {
         var query = @$"
-            INSERT INTO Events.dbo.{_dbHelper.ConnectionString.ApplicationName} (StreamId, Event, Timestamp)
+            INSERT INTO {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.ApplicationName} (StreamId, Event, Timestamp)
             VALUES (@streamId, @event, @timestamp)";
 
         List<SqlParameter> parameters = new List<SqlParameter>
@@ -65,7 +65,11 @@ internal class EventRepository
 
     internal async Task<List<IEvent>> GetEvents(Guid streamId, JsonSerializerOptions options)
     {
-        var query = @$"SELECT StreamID, Event FROM Events.dbo.Test WHERE StreamID = @streamId ORDER BY Timestamp";
+        var query = @$"
+            SELECT StreamID, Event
+            FROM {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.ApplicationName}
+            WHERE StreamID = @streamId
+            ORDER BY Timestamp";
 
         List<SqlParameter> parameters = new List<SqlParameter>
         {

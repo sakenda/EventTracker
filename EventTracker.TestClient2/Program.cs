@@ -8,7 +8,12 @@ internal class Program
     private static async Task Main(string[] args)
     {
         var eventManager = await EventManager.Initialize(
-            "Test", "Events", ".", "TestUser", "Test1234");
+            "StudentLog",
+            nameof(EventTracker.TestClient2),
+            "Events",
+            ".",
+            "TestUser",
+            "Test1234");
 
         var newStudent = new StudentCreated()
         {
@@ -53,7 +58,7 @@ internal class Program
 
         var addressUpdated = new AddressUpdated
         {
-            StreamId = newAddress.StreamId,
+            StreamId = newStudent.StreamId,
             Street = newAddress.Street,
             PostalCode = newAddress.PostalCode,
             City = "Rohrbach"
