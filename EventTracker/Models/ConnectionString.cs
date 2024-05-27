@@ -12,6 +12,7 @@ public class ConnectionString
 
     public ConnectionString(string tableName, string applicationName, string databaseName, string server, SqlCredential sqlCredential)
     {
+        TableName = tableName;
         ApplicationName = applicationName;
         DatabaseName = databaseName;
         SqlCredential = sqlCredential;
