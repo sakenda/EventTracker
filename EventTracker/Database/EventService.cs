@@ -26,7 +26,7 @@ public class EventService
         await _repository.AddEvent(@event, json);
     }
 
-    internal async Task<List<IEvent>> GetEvents(int streamId, JsonSerializerOptions options)
+    internal async Task<List<IEvent>> GetEvents(Guid streamId, JsonSerializerOptions options)
     {
         return await _repository.GetEvents(streamId, options);
     }

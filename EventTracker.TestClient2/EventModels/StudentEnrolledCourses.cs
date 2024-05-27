@@ -1,12 +1,12 @@
-﻿
+﻿using EventTracker.Interfaces;
+
 namespace EventTracker.TestClient2.EventModels;
 
-internal class StudentEnrolledCourses : Event
+internal class StudentEnrolledCourses : IEvent
 {
-    public required int Id { get; init; }
+    public required Guid StreamId { get; init; }
+    public DateTime Timestamp { get; set; }
 
     public List<string> Courses { get; set; }
-
-    public override int StreamId => Id;
 
 }

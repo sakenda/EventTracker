@@ -1,5 +1,6 @@
 ﻿using EventTracker.Interfaces;
 using EventTracker.Models;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text.Json;
 
@@ -31,11 +32,11 @@ internal class EventRepository
     internal async Task CreateDatabase()
     {
         var query = @$"
-            CREATE TABLE {_dbHelper.ConnectionString.DatabseName}.dbo.{_dbHelper.ConnectionString.ApplicationName} (
-                Id          INT             PRIMARY KEY IDENTITY(1, 1),
-                StreamID    INT             NOT NULL,
-                Event       NVARCHAR(MAX)   NOT NULL,
-                Timestamp   DATETIME2       NOT NULL
+            CREATE TABLE {_dbHelper.ConnectionString.DatabaseName}.dbo.{_dbHelper.ConnectionString.ApplicationName} (
+                Id          INT                 PRIMARY KEY     IDENTITY(1, 1),
+                StreamId    UNIQUEIDENTIFIER    NOT NULL,
+                Event       NVARCHAR(MAX)       NOT NULL,
+                Timestamp   DATETIME2           NOT NULL
             );";
 
         await _dbHelper.ExecuteSqlCommandWithTransaction(
@@ -51,9 +52,9 @@ internal class EventRepository
 
         List<SqlParameter> parameters = new List<SqlParameter>
         {
-            new SqlParameter("streamId", @event.StreamId),
-            new SqlParameter("event", json),
-            new SqlParameter("timestamp", @event.Timestamp),
+            new SqlParameter("@streamId", SqlDbType.UniqueIdentifier) { Value = @event.StreamId },
+            new SqlParameter("@event", SqlDbType.NVarChar) { Value = json },
+            new SqlParameter("@timestamp", SqlDbType.DateTime) { Value = @event.Timestamp },
         };
 
         await _dbHelper.ExecuteSqlCommandWithTransaction(
@@ -62,7 +63,7 @@ internal class EventRepository
             parameters);
     }
 
-    internal async Task<List<IEvent>> GetEvents(int streamId, JsonSerializerOptions options)
+    internal async Task<List<IEvent>> GetEvents(Guid streamId, JsonSerializerOptions options)
     {
         var query = @$"SELECT StreamID, Event FROM Events.dbo.Test WHERE StreamID = @streamId ORDER BY Timestamp";
 
@@ -87,4 +88,5 @@ internal class EventRepository
             }
         }, parameters);
     }
+
 }

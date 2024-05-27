@@ -2,7 +2,7 @@
 
 public interface IEvent
 {
-    public int StreamId { get; }
+    public Guid StreamId { get; }
 
     public DateTime Timestamp { get; set; }
 

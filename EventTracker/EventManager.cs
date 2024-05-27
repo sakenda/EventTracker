@@ -9,6 +9,11 @@ namespace EventTracker;
 public class EventManager
 {
     private readonly EventService _eventService;
+    private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
+    {
+        Converters = { new EventConverter() },
+        WriteIndented = true,
+    };
 
     public ConnectionString Connectionstring { get; init; }
 
@@ -49,40 +54,35 @@ public class EventManager
         return result;
     }
 
-    public async Task Append(IEvent @event, JsonSerializerOptions options)
+    public async Task Append(IEvent @event)
     {
-        ArgumentNullException.ThrowIfNull(options, nameof(options));
         ArgumentNullException.ThrowIfNull(@event, nameof(@event));
 
         @event.Timestamp = DateTime.Now;
-        var json = JsonSerializer.Serialize(@event, options);
+        var json = JsonSerializer.Serialize(@event, _serializerOptions);
 
         await _eventService.AddEvent(@event, json);
     }
 
-    public async Task<List<IEvent>> GetEvents(int streamId, JsonSerializerOptions options)
+    public async Task<List<IEvent>> GetEvents(Guid streamId)
     {
-        ArgumentNullException.ThrowIfNull(options, nameof(options));
-
-        if (streamId <= 0)
+        if (streamId == Guid.Empty)
         {
             return default;
         }
 
-        var result = await _eventService.GetEvents(streamId, options);
+        var result = await _eventService.GetEvents(streamId, _serializerOptions);
         return result;
     }
 
-    public async Task<T> GetAppliedEvents<T>(int streamId, JsonSerializerOptions options) where T : IEventApply, new()
+    public async Task<T> GetAppliedEvents<T>(Guid streamId) where T : IEventApply, new()
     {
-        ArgumentNullException.ThrowIfNull(options, nameof(options));
-
-        if (streamId <= 0)
+        if (streamId == Guid.Empty)
         {
             return default(T);
         }
 
-        var events = await _eventService.GetEvents(streamId, options);
+        var events = await _eventService.GetEvents(streamId, _serializerOptions);
         var item = new T();
 
         foreach (var @event in events)

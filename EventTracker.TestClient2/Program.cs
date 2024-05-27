@@ -8,73 +8,64 @@ internal class Program
     private static async Task Main(string[] args)
     {
         var eventManager = await EventManager.Initialize(
-            "Test", "Events", "(localdb)\\MSSQLLocalDB", "TestUser", "Test1234");
+            "Test", "Events", ".", "TestUser", "Test1234");
 
-        var options = new JsonSerializerOptions
+        var newStudent = new StudentCreated()
         {
-            Converters = { new StudentEventsConverter() },
-            WriteIndented = true
+            StreamId = Guid.NewGuid(),
+            Id = 1,
+            Name = "Michael",
+            Lastname = "Jimmy",
+            Email = "jimmy@gmail.com",
+            DateOfBirth = new DateTime(1986, 7, 12),
         };
+        await eventManager.Append(newStudent);
 
-        int studentId = 1;
-
-        if (false)
+        var newAddress = new AddressCreated
         {
-            var newStudent = new StudentCreated()
-            {
-                Id = studentId,
-                Name = "Michael",
-                Lastname = "Jimmy",
-                Email = "jimmy@gmail.com",
-                DateOfBirth = new DateTime(1986, 7, 12)
-            };
-            await eventManager.Append(newStudent, options);
+            StreamId = newStudent.StreamId,
+            Id = 1,
+            Street = "Geistkircher Hof 18",
+            City = "St. Ingbert",
+            PostalCode = "66386",
+            Country = "Germany",
+        };
+        await eventManager.Append(newAddress);
 
-            var updateStudent = new StudentUpdated()
-            {
-                Id = studentId,
-                Lastname = "Conny",
-                Email = "conny@gmail.de",
-            };
-            await eventManager.Append(updateStudent, options);
+        var updateStudent = new StudentUpdated()
+        {
+            StreamId = newStudent.StreamId,
+            Lastname = "Conny",
+            Email = "conny@gmail.de",
+        };
+        await eventManager.Append(updateStudent);
 
-            var studentEnrolled = new StudentEnrolledCourses()
+        var studentEnrolled = new StudentEnrolledCourses()
+        {
+            StreamId = newStudent.StreamId,
+            Courses = new List<string>()
             {
-                Id = studentId,
-                Courses = new List<string>()
-                {
-                    "English",
-                    "Math"
-                }
-            };
-            await eventManager.Append(studentEnrolled, options);
-        }
+                "English",
+                "Math"
+            }
+        };
+        await eventManager.Append(studentEnrolled);
 
-        // Student found
-        Student student = await eventManager.GetAppliedEvents<Student>(studentId, options);
+        var addressUpdated = new AddressUpdated
+        {
+            StreamId = newAddress.StreamId,
+            Street = newAddress.Street,
+            PostalCode = newAddress.PostalCode,
+            City = "Rohrbach"
+        };
+        await eventManager.Append(addressUpdated);
+
+        // Read and Build Student
+        Student student = await eventManager.GetAppliedEvents<Student>(newStudent.StreamId);
         var json = JsonSerializer.Serialize(student, new JsonSerializerOptions { WriteIndented = true });
         Console.WriteLine(json);
 
-        if (false)
-        {
-            // Create another Student
-            var newStudent2 = new StudentCreated()
-            {
-                Id = 2,
-                Name = student.Name,
-                Lastname = student.LastName,
-                Email = student.Email,
-                DateOfBirth = student.DateOfBirth
-            };
-            var newStudentEnrolled = new StudentEnrolledCourses() { Id = newStudent2.Id, Courses = student.Courses };
-            await eventManager.Append(newStudent2, options);
-            await eventManager.Append(newStudentEnrolled, options);
-        }
-
-        // If Student is not found
-        Student noStudent = await eventManager.GetAppliedEvents<Student>(0, options);
-        var jsonNoStudent = JsonSerializer.Serialize(noStudent, new JsonSerializerOptions { WriteIndented = true });
-        Console.WriteLine(jsonNoStudent);
+        
 
         Console.WriteLine("Done!");
     }
